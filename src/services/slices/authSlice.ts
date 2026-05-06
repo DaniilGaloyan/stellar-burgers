@@ -118,6 +118,9 @@ const authSlice = createSlice({
       })
 
       // Обработка выхода
+      .addCase(logout.pending, (state) => {
+        state.isAuthChecked = false;
+      })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
         state.isAuthChecked = false;

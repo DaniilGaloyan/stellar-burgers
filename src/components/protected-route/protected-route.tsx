@@ -5,6 +5,7 @@ import {
   selectIsAuthChecked,
   selectUser
 } from '../../services/slices/authSlice';
+import { Preloader } from '@ui';
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -16,7 +17,7 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
 
   if (!isAuthChecked) {
-    return null;
+    return <Preloader />;
   }
 
   if (!user) {
