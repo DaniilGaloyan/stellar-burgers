@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { TIngredient } from '@utils-types';
 import { orderBurgerApi } from '../../utils/burger-api';
 import type { RootState } from '../rootReducer';
+import { v4 as uuidv4 } from 'uuid';
 
 type TConstructorIngredient = TIngredient & { id: string };
 
@@ -74,14 +75,30 @@ export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addIngredient: (state, action: PayloadAction<TIngredient>) => {
-      const item = action.payload;
-      if (item.type === 'bun') {
-        state.bun = item;
-      } else {
-        state.ingredients.push({ ...item, id: Date.now().toString() });
+    addIngredient: {
+      reducer: (
+        state,
+        action: PayloadAction<TIngredient | TConstructorIngredient>
+      ) => {
+        const item = action.payload;
+        if (item.type === 'bun') {
+          state.bun = item;
+        } else {
+          state.ingredients.push(item as TConstructorIngredient);
+        }
+        saveCartToStorage(state);
+      },
+      prepare: (ingredient: TIngredient) => {
+        if (ingredient.type === 'bun') {
+          return { payload: ingredient };
+        }
+        return {
+          payload: {
+            ...ingredient,
+            id: uuidv4()
+          }
+        };
       }
-      saveCartToStorage(state);
     },
     removeIngredient: (state, action: PayloadAction<string>) => {
       state.ingredients = state.ingredients.filter(

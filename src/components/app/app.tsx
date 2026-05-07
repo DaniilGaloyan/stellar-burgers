@@ -189,7 +189,7 @@ const App = () => {
             path='/feed/:number'
             element={
               <Modal
-                title='Информация о заказе'
+                title={`#${location.pathname.split('/').pop()}`}
                 onClose={() => window.history.back()}
               >
                 <OrderInfo />
@@ -201,7 +201,7 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Modal
-                  title='Информация о заказе'
+                  title={`#${location.pathname.split('/').pop()}`}
                   onClose={() => window.history.back()}
                 >
                   <OrderInfo />
