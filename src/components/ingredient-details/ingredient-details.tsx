@@ -4,6 +4,7 @@ import { useAppSelector } from '../../services/store';
 import { selectIngredients } from '../../services/slices/ingredientsSlice';
 import { Preloader } from '../ui/preloader';
 import { IngredientDetailsUI } from '../ui/ingredient-details';
+import { NotFound404 } from '@pages';
 
 export const IngredientDetails: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -11,6 +12,9 @@ export const IngredientDetails: FC = () => {
   const ingredientData = ingredients.find((item) => item._id === id);
 
   if (!ingredientData) {
+    if (ingredients.length) {
+      return <NotFound404 />;
+    }
     return <Preloader />;
   }
 

@@ -150,6 +150,7 @@ export const getOrdersApi = () =>
   });
 
 type TOwner = {
+  _id: string;
   name: string;
   email: string;
   createdAt: string;

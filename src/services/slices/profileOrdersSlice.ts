@@ -59,3 +59,5 @@ export const selectProfileOrdersLoading = (state: RootState) =>
   state.profileOrders.loading;
 export const selectProfileOrdersError = (state: RootState) =>
   state.profileOrders.error;
+export const selectProfileOrderNumbers = (state: RootState) =>
+  state.profileOrders.orders.map((order) => order.number);

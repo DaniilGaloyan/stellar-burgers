@@ -42,6 +42,7 @@ type FeedsState = {
   total: number;
   totalToday: number;
   loading: boolean;
+  orderLoading: boolean;
   error: string | null;
   currentOrder: TOrder | null;
 };
@@ -51,6 +52,7 @@ const initialState: FeedsState = {
   total: 0,
   totalToday: 0,
   loading: false,
+  orderLoading: false,
   error: null,
   currentOrder: null
 };
@@ -76,16 +78,16 @@ const feedSlice = createSlice({
         state.error = action.error.message || 'Ошибка загрузки ленты заказов';
       })
       .addCase(getOrderByNumber.pending, (state) => {
-        state.loading = true;
+        state.orderLoading = true;
         state.error = null;
         state.currentOrder = null;
       })
       .addCase(getOrderByNumber.fulfilled, (state, action) => {
-        state.loading = false;
+        state.orderLoading = false;
         state.currentOrder = action.payload;
       })
       .addCase(getOrderByNumber.rejected, (state, action) => {
-        state.loading = false;
+        state.orderLoading = false;
         state.error = action.payload || 'Не удалось загрузить заказ по номеру';
       });
   }
@@ -98,5 +100,7 @@ export const selectFeedTotal = (state: RootState) => state.feeds.total;
 export const selectFeedTotalToday = (state: RootState) =>
   state.feeds.totalToday;
 export const selectFeedLoading = (state: RootState) => state.feeds.loading;
+export const selectOrderLoading = (state: RootState) =>
+  state.feeds.orderLoading;
 export const selectCurrentOrder = (state: RootState) =>
   state.feeds.currentOrder;
