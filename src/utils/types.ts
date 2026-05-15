@@ -24,6 +24,13 @@ export type TOrder = {
   updatedAt: string;
   number: number;
   ingredients: string[];
+  owner?: {
+    _id: string;
+    name: string;
+    email: string;
+    createdAt: string;
+    updatedAt: string;
+  };
 };
 
 export type TOrdersData = {
@@ -33,6 +40,7 @@ export type TOrdersData = {
 };
 
 export type TUser = {
+  _id: string;
   email: string;
   name: string;
 };

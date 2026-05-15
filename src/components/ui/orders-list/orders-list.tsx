@@ -7,8 +7,10 @@ import { OrderCard } from '@components';
 
 export const OrdersListUI: FC<OrdersListUIProps> = ({ orderByDate }) => (
   <div className={`${styles.content}`}>
-    {orderByDate.map((order) => (
-      <OrderCard order={order} key={order._id} />
-    ))}
+    {orderByDate.length > 0 ? (
+      orderByDate.map((order) => <OrderCard order={order} key={order._id} />)
+    ) : (
+      <p className='text text_type_main-default'>Заказы не найдены</p>
+    )}
   </div>
 );
