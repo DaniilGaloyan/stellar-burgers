@@ -1,0 +1,41 @@
+[
+  {
+    "_id": "bun-1",
+    "name": "Тест булка",
+    "type": "bun",
+    "proteins": 10,
+    "fat": 20,
+    "carbohydrates": 30,
+    "calories": 240,
+    "price": 100,
+    "image": "https://example.com/bun.png",
+    "image_mobile": "https://example.com/bun-mobile.png",
+    "image_large": "https://example.com/bun-large.png"
+  },
+  {
+    "_id": "main-1",
+    "name": "Тест начинка",
+    "type": "main",
+    "proteins": 5,
+    "fat": 5,
+    "carbohydrates": 10,
+    "calories": 80,
+    "price": 50,
+    "image": "https://example.com/main.png",
+    "image_mobile": "https://example.com/main-mobile.png",
+    "image_large": "https://example.com/main-large.png"
+  },
+  {
+    "_id": "sauce-1",
+    "name": "Тест соус",
+    "type": "sauce",
+    "proteins": 0,
+    "fat": 2,
+    "carbohydrates": 8,
+    "calories": 40,
+    "price": 20,
+    "image": "https://example.com/sauce.png",
+    "image_mobile": "https://example.com/sauce-mobile.png",
+    "image_large": "https://example.com/sauce-large.png"
+  }
+]

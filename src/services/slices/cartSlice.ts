@@ -128,6 +128,7 @@ export const cartSlice = createSlice({
       .addCase(createOrder.fulfilled, (state, action) => {
         const emptyState = { bun: null, ingredients: [] };
         saveCartToStorage(emptyState);
+        return emptyState;
       })
       .addCase(createOrder.rejected, (state, action) => {
         console.error('Ошибка создания заказа:', action.payload);
