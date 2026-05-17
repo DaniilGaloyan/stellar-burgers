@@ -18,7 +18,7 @@ test.describe('Страница конструктора бургера', () => 
       localStorage.setItem('refreshToken', 'refresh-token');
     });
 
-    await page.routeFromHAR(harPath, { notFound: 'fallback' });
+    await page.routeFromHAR(harPath, { url: '**/api/**', notFound: 'abort' });
     await page.goto('/');
   });
 
@@ -33,30 +33,46 @@ test.describe('Страница конструктора бургера', () => 
     test('должно открываться и закрываться по кнопке', async ({ page }) => {
       const ingredientElements = page.locator('[data-testid^="ingredient-"]');
       const firstIngredient = ingredientElements.first();
+      const modal = page.getByTestId('modal');
 
       await expect(firstIngredient).toBeVisible();
       await firstIngredient.locator('a').click();
 
-      await expect(page.getByTestId('modal')).toBeVisible();
+      await expect(modal).toBeVisible();
       await expect(page.getByTestId('modal-title')).toContainText('Детали ингредиента');
 
-      await page.locator('[data-testid="modal"] button').click();
-      await expect(page.getByTestId('modal')).toBeHidden();
+      await modal.getByRole('button').click();
+      await expect(modal).toBeHidden();
+    });
+
+    test('должно закрываться кликом по оверлею', async ({ page }) => {
+      const ingredientElements = page.locator('[data-testid^="ingredient-"]');
+      const firstIngredient = ingredientElements.first();
+      const modal = page.getByTestId('modal');
+      const overlay = page.getByTestId('modal-overlay');
+
+      await firstIngredient.locator('a').click();
+      await expect(modal).toBeVisible();
+      await expect(overlay).toBeVisible();
+
+      await overlay.click({ position: { x: 10, y: 10 }, force: true });
+      await expect(modal).toBeHidden();
     });
 
     test('должно показывать данные выбранного ингредиента в модальном окне', async ({ page }) => {
       const ingredientElements = page.locator('[data-testid^="ingredient-"]');
       const firstIngredient = ingredientElements.first();
-      const selectedIngredientName = (
-        await firstIngredient.locator('p').nth(1).textContent()
-      )?.trim();
+      const ingredientTitle = (await firstIngredient.locator('p').nth(1).textContent())?.trim();
+      const modal = page.getByTestId('modal');
+
+      expect(ingredientTitle).toBeTruthy();
 
       await firstIngredient.locator('a').click();
-      await expect(page.getByTestId('modal')).toBeVisible();
-      await expect(page.getByTestId('modal')).toContainText(selectedIngredientName || '');
+      await expect(modal).toBeVisible();
+      await expect(modal.getByText(ingredientTitle!)).toBeVisible();
 
-      await page.locator('[data-testid="modal"] button').click();
-      await expect(page.getByTestId('modal')).toBeHidden();
+      await modal.getByRole('button').click();
+      await expect(modal).toBeHidden();
     });
   });
 
@@ -64,13 +80,14 @@ test.describe('Страница конструктора бургера', () => 
     const ingredientElements = page.locator('[data-testid^="ingredient-"]');
     const bunItem = ingredientElements.nth(0);
     const mainItem = ingredientElements.nth(1);
+    const constructor = page.getByTestId('burger-constructor');
 
     await bunItem.getByRole('button', { name: 'Добавить' }).click();
     await mainItem.getByRole('button', { name: 'Добавить' }).click();
 
-    await expect(page.getByText('Тест булка (верх)')).toBeVisible();
-    await expect(page.getByText('Тест булка (низ)')).toBeVisible();
-    await expect(page.getByTestId('burger-constructor').getByText('Тест начинка')).toBeVisible();
+    await expect(constructor.getByText('Тест булка (верх)')).toBeVisible();
+    await expect(constructor.getByText('Тест булка (низ)')).toBeVisible();
+    await expect(constructor.getByText('Тест начинка')).toBeVisible();
   });
 
   test.describe('оформление заказа', () => {
@@ -78,13 +95,15 @@ test.describe('Страница конструктора бургера', () => 
       const ingredientElements = page.locator('[data-testid^="ingredient-"]');
       const bunItem = ingredientElements.nth(0);
       const mainItem = ingredientElements.nth(1);
+      const constructor = page.getByTestId('burger-constructor');
+      const orderModal = page.getByTestId('modal');
 
       await bunItem.getByRole('button', { name: 'Добавить' }).click();
       await mainItem.getByRole('button', { name: 'Добавить' }).click();
 
-      await expect(page.getByText('Тест булка (верх)')).toBeVisible();
-      await expect(page.getByText('Тест булка (низ)')).toBeVisible();
-      await expect(page.getByTestId('burger-constructor').getByText('Тест начинка')).toBeVisible();
+      await expect(constructor.getByText('Тест булка (верх)')).toBeVisible();
+      await expect(constructor.getByText('Тест булка (низ)')).toBeVisible();
+      await expect(constructor.getByText('Тест начинка')).toBeVisible();
 
       const orderButton = page.getByTestId('order-button');
       await expect(orderButton).toBeEnabled();
@@ -96,13 +115,13 @@ test.describe('Страница конструктора бургера', () => 
         orderButton.click()
       ]);
 
-      await expect(page.getByText('12345')).toBeVisible();
-      await expect(page.getByText('идентификатор заказа')).toBeVisible();
+      await expect(orderModal.getByText('12345')).toBeVisible();
+      await expect(orderModal.getByText('идентификатор заказа')).toBeVisible();
 
-      await page.locator('[data-testid="modal"] button').click();
-      await expect(page.getByTestId('modal')).toBeHidden();
-      await expect(page.getByText('Выберите булки').first()).toBeVisible();
-      await expect(page.getByText('Выберите начинку').first()).toBeVisible();
+      await orderModal.getByRole('button').click();
+      await expect(orderModal).toBeHidden();
+      await expect(constructor.getByText('Выберите булки').first()).toBeVisible();
+      await expect(constructor.getByText('Выберите начинку').first()).toBeVisible();
     });
   });
 });
